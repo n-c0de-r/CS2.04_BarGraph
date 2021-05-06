@@ -10,41 +10,42 @@ public class CountChars {
 
 	public static void main (String[] args) {
 		CountChars counter = new CountChars();
-		counter.original = new File ("C:\\Users\\HTW-IMI\\eclipse-workspace\\Lab4\\src\\text.txt");
-		counter.save = new File ("C:\\Users\\HTW-IMI\\eclipse-workspace\\Lab4\\src\\output.txt");
 		
-		
+		counter.setup();
+		counter.readChars(counter.text);
+	}
+
+	private void setup() {
+		original = new File("C:\\Users\\HTW-IMI\\eclipse-workspace\\Lab4\\src\\text.txt");
+		save = new File("C:\\Users\\HTW-IMI\\eclipse-workspace\\Lab4\\src\\output.txt");
 		
 		try {
-			counter.input = new FileReader(counter.original);
-			counter.output = new FileWriter(counter.save);
-			counter.text = new BufferedReader(counter.input);
-			counter.save.createNewFile();
-			
-			counter.readChars(counter.text);
-			
-			} catch (FileNotFoundException e) {
+			input = new FileReader(original);
+			output = new FileWriter(save);
+			text = new BufferedReader(input);
+			save.createNewFile();
+		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			} catch (IOException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	private void readChars(BufferedReader text) {
-		
+
 		try {
 			int c = 0;
 			while ((c = text.read()) != -1) {
 				if (c == 10 || c == 13) {
 					text.skip(1);
 				} else {
-				char character = (char) c; // converting integer to char
-				System.out.println(character);
+					char character = (char) c; // converting integer to char
+					System.out.println(character);
 				}
 			}
-		}catch(IOException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -53,5 +54,4 @@ public class CountChars {
 	private void writeChars(char c) {
 
 	}
-
 }
