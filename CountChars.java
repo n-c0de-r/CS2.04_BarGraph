@@ -39,6 +39,9 @@ public class CountChars {
 			while ((c = text.read()) != -1) {
 				char character = (char) c; // converting integer to char
 				System.out.println(character);
+				if (c == 13 || c == 10)
+				text.skip(1);
+				}
 			}catch(IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
