@@ -34,15 +34,16 @@ public class CountChars {
 
 	private void readChars(BufferedReader text) {
 		
-			try {
+		try {
 			int c = 0;
 			while ((c = text.read()) != -1) {
 				char character = (char) c; // converting integer to char
 				System.out.println(character);
-				if (c == 13 || c == 10)
-				text.skip(1);
+				if (c == 13 || c == 10){
+					text.skip(3);
 				}
-			}catch(IOException e) {
+			}
+		}catch(IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			}
