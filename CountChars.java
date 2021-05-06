@@ -42,6 +42,7 @@ public class CountChars {
 				} else {
 					char character = (char) c; // converting integer to char
 					System.out.println(character);
+					writeChars(character);
 				}
 			}
 		} catch (IOException e) {
@@ -50,8 +51,8 @@ public class CountChars {
 		}
 	}
 	
-	private void writeChars(char c) {
-		
+	private void writeChars(char c) throws IOException {
+		output.write(c);
 	}
 	
 }
