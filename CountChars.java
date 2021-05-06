@@ -37,16 +37,17 @@ public class CountChars {
 		try {
 			int c = 0;
 			while ((c = text.read()) != -1) {
+				if (c == 10 || c == 13) {
+					text.skip(1);
+				} else {
 				char character = (char) c; // converting integer to char
 				System.out.println(character);
-				if (c == 13 || c == 10){
-					text.skip(3);
 				}
 			}
 		}catch(IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			}
+		}
 	}
 
 	private void writeChars(char c) {
