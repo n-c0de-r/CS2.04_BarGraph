@@ -14,10 +14,10 @@ public class CountChars {
 		counter.setup();
 		counter.readChars(counter.text);
 	}
-
+	
 	private void setup() {
-		original = new File("C:\\Users\\HTW-IMI\\eclipse-workspace\\Lab4\\src\\text.txt");
-		save = new File("C:\\Users\\HTW-IMI\\eclipse-workspace\\Lab4\\src\\output.txt");
+		original = new File("./original.txt");
+		save = new File("./output.txt");
 		
 		try {
 			input = new FileReader(original);
@@ -32,9 +32,8 @@ public class CountChars {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private void readChars(BufferedReader text) {
-
 		try {
 			int c = 0;
 			while ((c = text.read()) != -1) {
@@ -50,8 +49,9 @@ public class CountChars {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private void writeChars(char c) {
-
+		
 	}
+	
 }
