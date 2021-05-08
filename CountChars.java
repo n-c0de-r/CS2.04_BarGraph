@@ -32,7 +32,7 @@ public class CountChars {
 	 * Creating all the relevant objects for the class
 	 */
 	private void setup() {
-		original = new File("./originalA.txt");
+		original = new File("./original.txt");
 		save = new File("./frequency.txt");
 		letters = new int[27];
 
