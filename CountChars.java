@@ -72,12 +72,16 @@ public class CountChars {
 
 	private void printHistogram() {
 		String star = "*";
-		String str = "";
-		for (int x : letters) {
+		//Start with a text stating the total number, not vital but fun
+		String str = "Total letters: " + letters[0] + "\r\n\r\n";
+		for (int x = 1; x<letters.length; x++) {
 			//Check each value in the array and set a star
 			//for each 10 characters.
-			str += star.repeat(x / 10) + "\r\n";
+			char c = (char) (x+64);
+			str += c + ": " + star.repeat(letters[x] / 10) + "\r\n";
 		}
+		//Append a legend/description at the end
+		str += "\r\n'*' = represents 10 characters of each letter";
 		try {
 			output.write(str);
 			output.flush();
