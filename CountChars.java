@@ -112,6 +112,9 @@ public class CountChars {
 			// Check each value in the array and set a star
 			// for a calculated amount of characters.
 			char c = (char) (x + 64);
+			//Print out numbers only for task 3
+			//str += letters[x] + "\r\n";
+			
 			// guard against small numbers of finds,
 			//  show them at least once for representation
 			if (letters[x] > percent / 2 && letters[x] < percent && letters[x] != 0) {
