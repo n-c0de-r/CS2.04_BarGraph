@@ -113,7 +113,7 @@ public class CountChars {
 			// for a calculated amount of characters.
 			char c = (char) (x + 64);
 			//Print out numbers only for task 3
-			//str += letters[x] + "\r\n";
+			//str += c + ": " + letters[x] + "\r\n";
 			
 			// guard against small numbers of finds,
 			//  show them at least once for representation
