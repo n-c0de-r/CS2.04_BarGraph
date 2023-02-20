@@ -131,6 +131,10 @@ public class CountChars {
 				}
 			}
 		}
+		
+		/* This is just for the legacy code. Can be
+		 * removed if only one implementation is kept.
+		 */
 		String str = lettersCount.toString();
 		str = str.substring(1, str.length()-1);
 		return str.split(", ");
@@ -183,6 +187,12 @@ public class CountChars {
 	 * @return The String containing the whole text representing a bar graph.
 	 */
 	private String createGraph(String[] characterMap) {
+		/* This is convloted and makes the code slower,
+		 * as it needs to split up everything, that had to be
+		 * glued together in the first place.
+		 * But this way the graph making method works with
+		 * the old Arrays and the new Maps equally.
+		 */
 		String[] chars = new String[characterMap.length];
 		int[] values = new int[characterMap.length];
 		int sum = 0;
@@ -282,6 +292,11 @@ public class CountChars {
 		return chr;
 	}
 	
+	/**
+	 * Get the next character from the scanner.
+	 * @param scanner	Scanner, that reads the files.
+	 * @return A valid character.
+	 */
 	private Character nextCharacter(Scanner scanner) {
 		int letter = scanner.next().codePointAt(0);
 		if(Character.isLetter(letter))
