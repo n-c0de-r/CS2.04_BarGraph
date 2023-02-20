@@ -1,5 +1,5 @@
 import java.io.*;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * This class takes an input text file, iterates over every single character and
@@ -11,8 +11,10 @@ import java.util.Scanner;
  */
 
 public class CountChars {
-	String inputPath;
-	String outputPath;
+	private double SCALING_FACTOR = 50.0;
+	private String SYMBOL = "*";
+	private String inputPath;
+	private String outputPath;
 	
 	public CountChars(String input, String output) {
 		inputPath = input;
@@ -41,22 +43,24 @@ public class CountChars {
 				+ "When you want to quit, write \"quit\" or.\n"
 				+ "just enter nothing to skip the input.");
 		while (true) {
-			System.out.println("\nPlease enter a path to a file you want to read from:");
-			input = getInptut(scanner);
-			BufferedReader buffer = readFile(input);
-			
-			// Read out the text stream and generate a graph
-			int[] letters = readChars(buffer);
-			String graphText = createBarGraph(letters);
-			
-			System.out.println("\nPlease enter a path to a file you want to save to:");
-			input = getInptut(scanner);
-			writeFile(graphText, input);
-			
-			System.out.println("\nDo you want to print the graph in the console?\n"
-					+ "Type \"no\" to skip, or anything else to accept:");
-			input = getInptut(scanner);
-			System.out.println(graphText);
+//			System.out.println("\nPlease enter a path to a file you want to read from:");
+//			input = getInput(scanner);
+//
+//			Reader fileContent = readFile(input);
+//			Reader buffer = new BufferedReader(fileContent);
+//			
+//			// Read out the text stream and generate a graph
+//			int[] letters = readCharsToArray(buffer);
+//			String graphText = createGraph(letters);
+//			
+//			System.out.println("\nPlease enter a path to a file you want to save to:");
+//			input = getInput(scanner);
+//			writeFile(graphText, input);
+//			
+//			System.out.println("\nDo you want to print the graph in the console?\n"
+//					+ "Type \"no\" to skip, or anything else to accept:");
+//			input = getInput(scanner);
+//			System.out.println(graphText);
 		}
 	}
 	
@@ -65,21 +69,22 @@ public class CountChars {
 	 * @return The full graph text to show in the GUI.
 	 */
 	public String run() {
-		BufferedReader buffer = readFile(inputPath);
-		int[] letters = readChars(buffer);
-		String graphText = createBarGraph(letters);
+		Reader fileContent = readFile(inputPath);
+		String[] letterMap = readCharsToMap(fileContent);
+//		String[] letterMap = readCharsToArray(fileContent);
+		
+		String graphText = createGraph(letterMap);
 		writeFile(graphText, outputPath);
 		return graphText;
 	}
 	
 	/**
-	 * Creating a buffered reader from a given file at a path.
-	 * 
+	 * Creating a reader from a given file at a path.
 	 * @param inputFilePath	A path to read the text from.
-	 * @return A bufferedReader containing the text of the file.
+	 * @return A Reader containing the text of the file.
 	 */
-	private BufferedReader readFile(String inputFilePath) {
-		BufferedReader bufferedReader = null;
+	private Reader readFile(String inputFilePath) {
+		FileReader fileContent = null;
 		String filePath = inputPath;
 		
 		if (isCorrectPath(inputFilePath))
@@ -88,8 +93,7 @@ public class CountChars {
 		File originalFile = new File(filePath);
 		
 		try {
-			FileReader input = new FileReader(originalFile);
-			bufferedReader = new BufferedReader(input);
+			fileContent = new FileReader(originalFile);
 		
 		} catch (FileNotFoundException e) {
 			System.err.println("Exception occurred: " + e.getMessage());
@@ -98,38 +102,65 @@ public class CountChars {
 			
 		}
 		
-		return bufferedReader;
+		return fileContent;
+	}
+	
+	/**
+	 * Creates a Map of Characters and their Integer counts.
+	 * More flexible, works with Unicode too!
+	 * @param fileContent	The file to read from.
+	 * @return A String array representation of counted characters.
+	 */
+	private String[] readCharsToMap(Reader fileContent) {
+		Map<Character, Integer> lettersCount = new HashMap<>();
+		
+		try (Scanner scanner = new Scanner(fileContent)) {
+			 // Set the delimiter to an empty string to read character by character
+			scanner.useDelimiter("");
+			
+			while (scanner.hasNext()) {
+				Character key = nextCharacter(scanner);
+				if(key == null) {
+					continue; // Skip invalid characters.
+				}
+				
+				if(lettersCount.containsKey(key)) {
+					lettersCount.put(key, lettersCount.get(key)+1);
+				} else {
+					lettersCount.put(key, 1);
+				}
+			}
+		}
+		String str = lettersCount.toString();
+		str = str.substring(1, str.length()-1);
+		return str.split(", ");
 	}
 	
 	/**
 	 * Reads each character of a given text file.
-	 * 
-	 * @param text	Text from a text file in a buffered reader.
-	 * @return An array of counted characters.
+	 * Most basic solution for standard ASCII alphabet,
+	 * resulting to an array of counts, with index 0
+	 * holding the sum of all characters for graph display.
+	 * @param buffer	Text from a text file in a buffered reader.
+	 * @return A String array representation of counted characters.
 	 */
-	
-	
-	private int[] readChars(BufferedReader text) {
-		// Letters equal the indices: 1-26 = a-z;
-		// 0th index stores the count of all characters.
-		int[] lettersCount = new int[27];
+	private String[] readCharsToArray(Reader buffer) {
+		// Letters equal the indices: 0-25 = (a-1)-z;
+		int[] lettersCount = new int['z'-('a'-1)];
+		String[] str = new String[lettersCount.length];
 		
 		try {
 			int charValue = 0;
-			while ((charValue = text.read()) != -1) {
+			while ((charValue = buffer.read()) != -1) {
 				// Skip all non characters
 				if (!isValidCharacter(charValue)) {
-					text.skip(1);
 					continue;
 				}
 				
 				// Make all capital letters small with normalize,
 				// as there are fewer of them in general.
-				// Subtract the value of 'a'-1 (96) to get the index.
-				lettersCount[normalize(charValue) - ('a'-1)]++;
-			// for every counted letter increment the number
-			// of all letters found in a file
-			lettersCount[0]++;
+				// Subtract the value of 'A' (65) to get the index.
+				lettersCount[normalize(charValue) - ('A'-0)]++;
 			}
 
 		} catch (IOException e) {
@@ -138,53 +169,58 @@ public class CountChars {
 			System.exit(0);
 		}
 		
-		return lettersCount;
+		for (int i = 0; i < str.length; i++) {
+			str[i] = (char) (i+'A') + "=" + lettersCount[i];
+		}
+		
+		return str;
 	}
 	
 	/**
-	 * prints out a bar graph where stars represent a certain amount of characters
-	 * relative to the total.
-	 * 
-	 * @param characterArray	The Array of characters to make a graph from.
+	 * Prints out a bar graph where each Symbol represent a
+	 * certain amount of characters relative to the total.
+	 * @param characterMap	A String array representation of counted characters.
 	 * @return The String containing the whole text representing a bar graph.
 	 */
-	private String createBarGraph(int[] characterArray) {
+	private String createGraph(String[] characterMap) {
+		String[] chars = new String[characterMap.length];
+		int[] values = new int[characterMap.length];
+		int sum = 0;
+		int index = 0;
 		
-		String star = "*";
-		// Start with a text stating the total number, not vital but fun
-		String str = "Total printable characters: " + characterArray[0] + "\r\n\r\n";
-		int highest = findMax(characterArray);
-		double percent;
-		
-		// guard against very small numbers, keeps representation always readable
-		if (highest < 100) {
-			percent = 1.0 * characterArray[0] / highest;
-		} else {
-			percent = highest / 100.0;
+		for (String pair : characterMap) {
+			chars[index] = pair.split("=")[0];
+			values[index] = Integer.parseInt(pair.split("=")[1]);
+			sum += values[index];
+			index++;
 		}
 		
-		for (int x = 1; x < characterArray.length; x++) {
-			// Check each value in the array and set a star
-			// for a calculated amount of characters.
-			char c = (char) (x + 64);
+		// Start with a text stating the total number, not vital but fun
+		String graph = "Total printable characters: " + sum + "\r\n\r\n";
+		
+		int highest = findMax(values);
+		int starCount;
+		
+		double percent = highest / SCALING_FACTOR;
+		
+		// Check each value in the array and set a star
+		// for a calculated amount of characters.
+		for (int i = 0; i < chars.length; i++) {
 			
 			//Print out numbers only for task 3
-			//str += c + ": " + letters[x] + "\r\n";
+			//graph += chars[i] + ": " + values[i] + "\r\n";
+			// continue;
 			
-			// guard against small numbers of finds,
-			//  show them at least once for representation
-			if (characterArray[x] > percent / 2 && characterArray[x] < percent && characterArray[x] != 0) {
-				str += c + ": *\r\n";
-			} else {
-				str += c + ": " + star.repeat((int) (characterArray[x] / percent)) + "\r\n";
-			}
+			starCount = (int) Math.ceil(values[i]*SCALING_FACTOR/highest);
+			graph += chars[i] + ": " + SYMBOL.repeat(starCount) + "\r\n";
 		}
+		
 		// Append a legend/description at the end, rounds doubles down
-		str += "\r\n'*' = represents approximately " + (Math.round(percent * 10) / 10.0)
+		graph += "\r\n'*' = represents approximately " + (Math.round(percent * SCALING_FACTOR) / SCALING_FACTOR)
 				+ " characters of each letter.\r\n"
 				+ "Small counts are shown as one star, if they surpass half the scale ammount.";
 		
-		return str;
+		return graph;
 	}
 	
 	/**
@@ -213,9 +249,9 @@ public class CountChars {
 		}
 		
 		// Once a file was created write the text to file.
-		// Potential to short down to one try catch block!
+		// Potential to short down to one try-catch block!
 		
-		try  (FileWriter output = new FileWriter(saveToFile)) {
+		try  (Writer output = new FileWriter(saveToFile)) {
 			output.write(stringToWrite);
 			output.flush();
 			// Write the whole text to the file.
@@ -234,44 +270,23 @@ public class CountChars {
 	// HELPER METHODS
 	
 	/**
-	 * Gets and evaluates the input from the user.
-	 * Returns a string of the given input line.
-	 * @param scanner	The Scanner to read from.
-	 * @return	The next line from the Scanner, stripped & trimmed.
+	 * Normalizes given characters to upper case.
+	 * @param chr	A character to convert.
 	 */
-	private String getInptut(Scanner scanner) {
-		String input = scanner.nextLine();
-		if(wantsToQuit(input.toLowerCase())) System.exit(0);
-		return input.strip().trim();
+	private int normalize(int chr) {
+		// Check the ASCII code of letters
+		if (chr >= 'a'-0 && chr <= 'z'-0) {
+			// convert to upper case
+			chr -= 32;
+		}
+		return chr;
 	}
 	
-	/**
-	 * Checks if the user input results to a termination.
-	 * @param userInput	The input string to check.
-	 * @return	Either true or false, quit or continue.
-	 */
-	private boolean wantsToQuit(String userInput) {
-		return (userInput.equals("no") || userInput.equals("quit"));
-	}
-	
-	/**
-	 * Checks if a file path is not blank.
-	 * @param path	The path to check.
-	 * @return	True when it is correct.
-	 */
-	private boolean isCorrectPath(String path) {
-		return path != null && !path.isBlank() && !path.isEmpty();
-	}
-	
-	/**
-	 * Checks if a given character value is within
-	 * the range of accepted characters A-Z & a-z.
-	 * @param chr	The character value to check.
-	 * @return	True if within.
-	 */
-	private boolean isValidCharacter(int chr) {
-		return ((chr >= 'A'-0 && chr < 'Z'-0) ||
-		(chr >= 'a'-0 && chr <= 'z'-0));
+	private Character nextCharacter(Scanner scanner) {
+		int letter = scanner.next().codePointAt(0);
+		if(Character.isLetter(letter))
+			return (char) Character.toUpperCase(letter);
+		return null;
 	}
 	
 	/**
@@ -291,15 +306,43 @@ public class CountChars {
 	}
 	
 	/**
-	 * Normalizes given characters to lower case.
-	 * @param chr	A character to convert.
+	 * Gets and evaluates the input from the user.
+	 * Returns a string of the given input line.
+	 * @param scanner	The Scanner to read from.
+	 * @return	The next line from the Scanner, stripped & trimmed.
 	 */
-	private int normalize(int chr) {
-		// Check the ASCII code of letters
-		if (chr > 64 && chr < 91) {
-			// convert to lower case
-			chr += 32;
-		}
-		return chr;
+	private String getInput(Scanner scanner) {
+		String input = scanner.nextLine();
+		if(wantsToQuit(input.toLowerCase())) System.exit(0);
+		return input.strip().trim();
+	}
+	
+	/**
+	 * Checks if a file path is not blank.
+	 * @param path	The path to check.
+	 * @return	True when it is correct.
+	 */
+	private boolean isCorrectPath(String path) {
+		return path != null && !path.isBlank() && !path.isEmpty();
+	}
+	
+	/**
+	 * Checks if a given character value is within
+	 * the range of accepted characters A-Z & a-z.
+	 * @param chr	The character value to check.
+	 * @return	True if within.
+	 */
+	private boolean isValidCharacter(int chr) {
+		return ((chr >= 'A'-0 && chr <= 'Z'-0) ||
+		(chr >= 'a'-0 && chr <= 'z'-0));
+	}
+	
+	/**
+	 * Checks if the user input results to a termination.
+	 * @param userInput	The input string to check.
+	 * @return	Either true or false, quit or continue.
+	 */
+	private boolean wantsToQuit(String userInput) {
+		return (userInput.equals("no") || userInput.equals("quit"));
 	}
 }

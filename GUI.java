@@ -135,7 +135,7 @@ public class GUI extends JFrame {
 			File file = fileChooser.getSelectedFile();
 			String filePath = file.getAbsolutePath();
 			if(!filePath.endsWith(".txt")) filePath += ".txt";
-			outputFileTextField.setText(file.getAbsolutePath());
+			outputFileTextField.setText(filePath);
 		}
 	}
 	
