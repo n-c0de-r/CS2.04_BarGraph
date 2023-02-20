@@ -11,6 +11,17 @@ import java.util.Scanner;
  */
 
 public class CountChars {
+	String inputPath;
+	String outputPath;
+	
+	public CountChars(String input, String output) {
+		inputPath = input;
+		outputPath = output;
+	}
+	
+	public CountChars() {
+		this("./original.txt", "./frequencies.txt");
+	}
 	
 	public static void main(String[] args) {
 		// Create an instance of the class for OOP approach
@@ -50,6 +61,18 @@ public class CountChars {
 	}
 	
 	/**
+	 * Same as above, but for the GUI.
+	 * @return The full graph text to show in the GUI.
+	 */
+	public String run() {
+		BufferedReader buffer = readFile(inputPath);
+		int[] letters = readChars(buffer);
+		String graphText = createBarGraph(letters);
+		writeFile(graphText, outputPath);
+		return graphText;
+	}
+	
+	/**
 	 * Creating a buffered reader from a given file at a path.
 	 * 
 	 * @param inputFilePath	A path to read the text from.
@@ -57,7 +80,7 @@ public class CountChars {
 	 */
 	private BufferedReader readFile(String inputFilePath) {
 		BufferedReader bufferedReader = null;
-		String path = "./original.txt";
+		String path = inputPath;
 		
 		if (isCorrectPath(inputFilePath))
 			path = inputFilePath;
@@ -79,7 +102,7 @@ public class CountChars {
 	}
 	
 	/**
-	 * Reads each character of a given text file
+	 * Reads each character of a given text file.
 	 * 
 	 * @param text	Text from a text file in a buffered reader.
 	 * @return An array of counted characters.
@@ -173,7 +196,7 @@ public class CountChars {
 		// This is not a path, but the check is almost the same. Kinda wrong usage!
 		if (!isCorrectPath(stringToWrite)) return;
 		
-		String path = "./frequency.txt";
+		String path = outputPath;
 		
 		if (isCorrectPath(outputFilePath))
 			path = outputFilePath;
@@ -213,7 +236,7 @@ public class CountChars {
 	/**
 	 * Gets and evaluates the input from the user.
 	 * Returns a string of the given input line.
-	 * 
+	 * @param scanner	The Scanner to read from.
 	 * @return	The next line from the Scanner, stripped & trimmed.
 	 */
 	private String getInptut(Scanner scanner) {
