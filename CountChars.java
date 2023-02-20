@@ -43,24 +43,24 @@ public class CountChars {
 				+ "When you want to quit, write \"quit\" or.\n"
 				+ "just enter nothing to skip the input.");
 		while (true) {
-//			System.out.println("\nPlease enter a path to a file you want to read from:");
-//			input = getInput(scanner);
-//
-//			Reader fileContent = readFile(input);
-//			Reader buffer = new BufferedReader(fileContent);
-//			
-//			// Read out the text stream and generate a graph
-//			int[] letters = readCharsToArray(buffer);
-//			String graphText = createGraph(letters);
-//			
-//			System.out.println("\nPlease enter a path to a file you want to save to:");
-//			input = getInput(scanner);
-//			writeFile(graphText, input);
-//			
-//			System.out.println("\nDo you want to print the graph in the console?\n"
-//					+ "Type \"no\" to skip, or anything else to accept:");
-//			input = getInput(scanner);
-//			System.out.println(graphText);
+			System.out.println("\nPlease enter a path to a file you want to read from:");
+			input = getInput(scanner);
+
+			Reader fileContent = readFile(input);
+			Reader buffer = new BufferedReader(fileContent);
+			
+			// Read out the text stream and generate a graph
+			String[] letters = readCharsToArray(buffer);
+			String graphText = createGraph(letters);
+			
+			System.out.println("\nPlease enter a path to a file you want to save to:");
+			input = getInput(scanner);
+			writeFile(graphText, input);
+			
+			System.out.println("\nDo you want to print the graph in the console?\n"
+					+ "Type \"no\" to skip, or anything else to accept:");
+			input = getInput(scanner);
+			System.out.println(graphText);
 		}
 	}
 	
