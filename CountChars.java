@@ -80,12 +80,12 @@ public class CountChars {
 	 */
 	private BufferedReader readFile(String inputFilePath) {
 		BufferedReader bufferedReader = null;
-		String path = inputPath;
+		String filePath = inputPath;
 		
 		if (isCorrectPath(inputFilePath))
-			path = inputFilePath;
+			filePath = inputFilePath;
 		
-		File originalFile = new File(path);
+		File originalFile = new File(filePath);
 		
 		try {
 			FileReader input = new FileReader(originalFile);
@@ -196,12 +196,12 @@ public class CountChars {
 		// This is not a path, but the check is almost the same. Kinda wrong usage!
 		if (!isCorrectPath(stringToWrite)) return;
 		
-		String path = outputPath;
+		String filePath = outputPath;
 		
 		if (isCorrectPath(outputFilePath))
-			path = outputFilePath;
+			filePath = outputFilePath;
 		
-		File saveToFile = new File(path);
+		File saveToFile = new File(filePath);
 		
 		try { // to create a new output file
 			saveToFile.createNewFile();

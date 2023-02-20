@@ -119,7 +119,9 @@ public class GUI extends JFrame {
 		int returnVal = fileChooser.showOpenDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
-			inputFileTextField.setText(file.getAbsolutePath());
+			String filePath = file.getAbsolutePath();
+			if(!filePath.endsWith(".txt")) filePath += ".txt";
+			inputFileTextField.setText(filePath);
 		}
 	}
 	
@@ -131,6 +133,8 @@ public class GUI extends JFrame {
 		int returnVal = fileChooser.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
+			String filePath = file.getAbsolutePath();
+			if(!filePath.endsWith(".txt")) filePath += ".txt";
 			outputFileTextField.setText(file.getAbsolutePath());
 		}
 	}
